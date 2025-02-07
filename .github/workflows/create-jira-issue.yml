@@ -61,6 +61,11 @@ jobs:
           fi
           echo "fields=$JSON_FIELDS" >> $GITHUB_ENV
 
+      - name: Log Variables Before Creating Issue
+        run: |
+          echo "Issuetype: ${{ env.issuetype }}"
+          echo "Fields: ${{ env.fields }}"    
+
       - name: Create Issue
         id: create
         uses: atlassian/gajira-create@v3
