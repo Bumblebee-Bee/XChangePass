@@ -47,11 +47,22 @@ body:
       required: true
 
   - type: input
-    id: schedule
+    id: startdate
     attributes:
-      label: "🗓️ 개발 일정"
-      description: "예상 개발 기간을 입력해주세요."
-      placeholder: "00월 00일 ~ 00월 00일"
+      label: "🗓️ 시작일"
+      description: "개발 시작일을 입력해주세요."
+      placeholder: "00월 00일"
+    validations:
+      required: true
+
+  - type: input
+    id: enddate
+    attributes:
+      label: "🗓️ 종료일"
+      description: "개발 종료일을 입력해주세요."
+      placeholder: "00월 00일"
+    validations:
+      required: true
 
   - type: textarea
     id: references
