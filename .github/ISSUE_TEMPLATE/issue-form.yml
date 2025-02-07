@@ -1,83 +1,61 @@
-name: Create Jira issue
-on:
-  issues:
-    types:
-      - opened
+name: Feature Request
+description: 새로운 기능을 요청할 때 사용해주세요.
+title: "[Feat] "
+labels: ["✨ Feature"]
+body:
+  - type: input
+    id: parentKey
+    attributes:
+      label: '상위 작업 Ticket Number'
+      description: '상위 작업의 Ticket Number를 기입해주세요 (없다면 비워두세요)'
+      placeholder: 'KAN-00'
+    validations:
+      required: false
 
-permissions:
-  issues: write   # GitHub Issue에 대한 쓰기 권한
-  contents: read  # 코드베이스 읽기 권한
+  - type: input
+    id: feature_summary
+    attributes:
+      label: "⚒️ 구현할 기능"
+      description: "어떤 기능을 구현하고 싶은지 적어주세요."
+      placeholder: "ex) 회원 가입 기능 구현"
+    validations:
+      required: true
 
-jobs:
-  create-issue:
-    name: Create Jira issue
-    runs-on: ubuntu-latest
-    steps:
-      - name: Login
-        uses: atlassian/gajira-login@v3
-        env:
-          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
-          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
-          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+  - type: textarea
+    id: reason
+    attributes:
+      label: "🎯 기능이 필요한 이유"
+      description: "왜 이 기능이 필요한지 설명해주세요."
+      placeholder: "이 기능이 필요한 이유를 간략하게 적어주세요."
 
-      - name: Checkout main code
-        uses: actions/checkout@v4
-        with:
-          ref: main
+  - type: textarea
+    id: plan
+    attributes:
+      label: "✨ 구현 계획"
+      description: "어떤 방식으로 구현할 계획인지 적어주세요."
+      placeholder: "구현 계획을 자세히 적어주세요."
 
-      - name: Issue Parser
-        uses: stefanbuck/github-issue-praser@v3
-        id: issue-parser
-        with:
-          template-path: .github/ISSUE_TEMPLATE/issue_form.yml  # 템플릿 경로 확인
+  - type: textarea
+    id: details
+    attributes:
+      label: "📝 작업 상세 내용"
+      description: "기능 구현에 필요한 체크 리스트를 작성해주세요."
+      value: |
+        - [ ] 내용 1
+        - [ ] 내용 2
+    validations:
+      required: true
 
-      - name: Log Issue Parser
-        run: |
-          echo '${{ steps.issue-parser.outputs.jsonString }}'
+  - type: input
+    id: schedule
+    attributes:
+      label: "🗓️ 개발 일정"
+      description: "예상 개발 기간을 입력해주세요."
+      placeholder: "00월 00일 ~ 00월 00일"
 
-      - name: Convert markdown to Jira Syntax
-        uses: peter-evans/jira2md@v1
-        id: md2jira
-        with:
-          input-text: |
-            ### Github Issue Link
-            - ${{ github.event.issue.html_url }}
-
-            ${{ github.event.issue.body }}
-          mode: md2jira
-
-      - name: Determine Fields
-        id: fields
-        run: |
-          if [[ -z "${{ steps.issue-parser.outputs.parentKey }}" ]]; then
-            echo 'fields={}' >> $GITHUB_ENV
-            echo "issuetype=Task" >> $GITHUB_ENV
-          else
-            echo 'fields={"parent": {"key": "${{ steps.issue-parser.outputs.parentKey }}"}}' >> $GITHUB_ENV
-            echo "issuetype=Subtask" >> $GITHUB_ENV
-          fi
-
-      - name: Create Issue
-        id: create
-        uses: atlassian/gajira-create@v3
-        with:
-          project: KAN
-          issuetype: ${{ env.issuetype }}  # 부모가 없으면 Task, 있으면 Subtask
-          summary: "${{ github.event.issue.title }}"
-          description: "${{ steps.md2jira.outputs.output-text }}"
-          fields: ${{ env.fields }}
-
-      - name: Log created issue
-        run: echo "Jira Issue ${{ steps.create.outputs.issue }} was created"
-
-      - name: Checkout develop code
-        uses: actions/checkout@v4
-        with:
-          ref: develop
-
-      - name: Update issue title
-        uses: actions-cool/issues-helper@v3
-        with:
-          actions: "update-issue"
-          token: ${{ secrets.GITHUB_TOKEN }}  # 필요한 권한을 명시적으로 확인
-          title: "${{ steps.create.outputs.issue }} ${{ github.event.issue.title }}"
+  - type: textarea
+    id: references
+    attributes:
+      label: "🌱 나누고 싶은 점"
+      description: "기능 관련 나누고 싶은 내용을 작성해주세요."
+      placeholder: "참고한 자료나 의견을 공유해주세요."
