@@ -75,7 +75,7 @@ jobs:
               --arg schedule "${{ env.schedule }}" \
               --arg start_date "${{ env.start_date }}" \
               --arg end_date "${{ env.end_date }}" \
-              '{ summary: $feature_summary, customfield_10000: $schedule, customfield_XXXXX: $start_date, customfield_YYYYY: $end_date }')  # customfield_XXXXX 및 customfield_YYYYY는 실제 필드 ID로 대체
+              '{ summary: $feature_summary, customfield_10000: $schedule, customfield_10015: $start_date, customfield_10017: $end_date }')  # customfield_10015는 Start date, customfield_10017은 End date 필드 ID
           else
             # Subtask 생성 (부모 이슈 존재)
             echo 'issuetype=하위 작업' >> $GITHUB_ENV
