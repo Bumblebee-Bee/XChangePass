@@ -57,20 +57,19 @@ jobs:
         run: |
           if [[ -z "${{ env.parentKey }}" ]]; then
             # Epic 생성 (부모 이슈 없음)
-            echo 'issuetype=Epic' >> $GITHUB_ENV
+            echo 'issuetype=에픽' >> $GITHUB_ENV
             JSON_FIELDS=$(jq -n \
               --arg schedule "${{ env.schedule }}" \
               '{ customfield_10000: $schedule }')
           else
             # Subtask 생성 (부모 이슈 존재)
-            echo 'issuetype=Subtask' >> $GITHUB_ENV
+            echo 'issuetype=하위 작업' >> $GITHUB_ENV
             JSON_FIELDS=$(jq -n \
               --arg parentKey "${{ env.parentKey }}" \
               --arg schedule "${{ env.schedule }}" \
               '{ parent: { key: $parentKey }, customfield_10000: $schedule }')
           fi
           echo "fields=$(echo $JSON_FIELDS | jq -c .)" >> $GITHUB_ENV
-      
 
       - name: Log Variables Before Creating Issue
         run: |
