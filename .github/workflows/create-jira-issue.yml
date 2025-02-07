@@ -34,6 +34,8 @@ jobs:
           echo "parentKey=$(echo $JSON_DATA | jq -r '.parentKey')" >> $GITHUB_ENV
           echo "feature_summary=$(echo $JSON_DATA | jq -r '.feature_summary')" >> $GITHUB_ENV
           echo "schedule=$(echo $JSON_DATA | jq -r '.schedule')" >> $GITHUB_ENV
+          echo "start_date=$(echo $JSON_DATA | jq -r '.start_date')" >> $GITHUB_ENV
+          echo "due_date=$(echo $JSON_DATA | jq -r '.due_date')" >> $GITHUB_ENV
 
       - name: Debug Parsed Outputs
         run: |
@@ -41,6 +43,8 @@ jobs:
           echo "Parent Key: ${{ env.parentKey }}"
           echo "Feature Summary: ${{ env.feature_summary }}"
           echo "Schedule: ${{ env.schedule }}"
+          echo "Start Date: ${{ env.start_date }}"
+          echo "Due Date: ${{ env.due_date }}"
 
       - name: Convert markdown to Jira Syntax
         uses: peter-evans/jira2md@v1
@@ -55,19 +59,31 @@ jobs:
       - name: Determine Fields
         id: fields
         run: |
+          # 날짜 범위 분리 (예: 02월 07일 ~ 02월 17일 -> Start date와 Due date)
+          schedule="${{ env.schedule }}"
+          start_date=$(echo $schedule | cut -d'~' -f1 | xargs)  # '02월 07일' 부분 추출
+          due_date=$(echo $schedule | cut -d'~' -f2 | xargs)   # '02월 17일' 부분 추출
+
+          echo "start_date=$start_date" >> $GITHUB_ENV
+          echo "due_date=$due_date" >> $GITHUB_ENV
+
           if [[ -z "${{ env.parentKey }}" ]]; then
             # Epic 생성 (부모 이슈 없음)
-            echo 'issuetype=에픽' >> $GITHUB_ENV
+            echo 'issuetype=Epic' >> $GITHUB_ENV
             JSON_FIELDS=$(jq -n \
+              --arg feature_summary "${{ env.feature_summary }}" \
               --arg schedule "${{ env.schedule }}" \
-              '{ customfield_10000: $schedule }')
+              --arg start_date "${{ env.start_date }}" \
+              --arg due_date "${{ env.due_date }}" \
+              '{ summary: $feature_summary, customfield_10000: $schedule, customfield_XXXXX: $start_date, customfield_YYYYY: $due_date }')  # customfield_XXXXX 및 customfield_YYYYY는 실제 필드 ID로 대체
           else
             # Subtask 생성 (부모 이슈 존재)
-            echo 'issuetype=하위 작업' >> $GITHUB_ENV
+            echo 'issuetype=Subtask' >> $GITHUB_ENV
             JSON_FIELDS=$(jq -n \
               --arg parentKey "${{ env.parentKey }}" \
+              --arg feature_summary "${{ env.feature_summary }}" \
               --arg schedule "${{ env.schedule }}" \
-              '{ parent: { key: $parentKey }, customfield_10000: $schedule }')
+              '{ parent: { key: $parentKey }, summary: $feature_summary, customfield_10000: $schedule }')
           fi
           echo "fields=$(echo $JSON_FIELDS | jq -c .)" >> $GITHUB_ENV
 
