@@ -77,8 +77,8 @@ jobs:
               --arg end_date "$end_date_formatted" \
               '{ summary: $feature_summary, customfield_10015: $start_date, customfield_10017: $end_date, duedate: $end_date }')
           else
-            # Subtask 생성 (부모 이슈 존재)
-            echo 'issuetype=하위 작업' >> $GITHUB_ENV
+            # Child Issue 생성 (Epic 하위 이슈)
+            echo 'issuetype=Story' >> $GITHUB_ENV  # 여기서 하위 이슈 유형을 지정
             JSON_FIELDS=$(jq -n \
               --arg parentKey "${{ env.parentKey }}" \
               --arg feature_summary "${{ env.feature_summary }}" \
