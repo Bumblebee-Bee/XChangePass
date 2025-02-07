@@ -78,7 +78,7 @@ jobs:
               '{ summary: $feature_summary, customfield_10015: $start_date, customfield_10017: $end_date, duedate: $end_date }')
           else
             # Child Issue 생성 (Epic 하위 이슈)
-            echo 'issuetype=Story' >> $GITHUB_ENV  # 여기서 하위 이슈 유형을 지정
+            echo 'issuetype=Task' >> $GITHUB_ENV  # 여기서 하위 이슈 유형을 지정
             JSON_FIELDS=$(jq -n \
               --arg parentKey "${{ env.parentKey }}" \
               --arg feature_summary "${{ env.feature_summary }}" \
