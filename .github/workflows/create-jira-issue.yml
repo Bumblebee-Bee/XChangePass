@@ -21,14 +21,16 @@ jobs:
           ref: main
 
       - name: Issue Parser
-        uses: stefanbuck/github-issue-parser@v3  # 오타 수정 (praser -> parser)
+        uses: stefanbuck/github-issue-parser@v3
         id: issue-parser
         with:
           template-path: .github/ISSUE_TEMPLATE/issue-form.yml
 
       - name: Debug Parsed Outputs
         run: |
+          echo "Parsed Issue Body: ${{ steps.issue-parser.outputs.jsonString }}"
           echo "Parent Key: ${{ steps.issue-parser.outputs.parentKey }}"
+          echo "Feature Summary: ${{ steps.issue-parser.outputs.feature_summary }}"
           echo "Schedule: ${{ steps.issue-parser.outputs.schedule }}"
 
       - name: Convert markdown to Jira Syntax
