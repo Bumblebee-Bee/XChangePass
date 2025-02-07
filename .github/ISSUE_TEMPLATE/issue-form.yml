@@ -1,7 +1,7 @@
-name: 'SSDA Front 이슈 생성'
-description: 'SSDA Front Repo에 이슈를 생성하며, 생성된 이슈는 Jira와 연동됩니다.'
-labels: [order]
-title: '이슈 이름을 작성해주세요'
+name: Feature Request
+description: 새로운 기능을 요청할 때 사용해주세요.
+title: "[Feat] "
+labels: ["✨ Feature"]
 body:
   - type: input
     id: parentKey
@@ -13,40 +13,49 @@ body:
       required: false
 
   - type: input
-    id: description
+    id: feature_summary
     attributes:
-      label: '이슈 내용(Description)'
-      description: '이슈에 대해서 간략히 설명해주세요'
+      label: "⚒️ 구현할 기능"
+      description: "어떤 기능을 구현하고 싶은지 적어주세요."
+      placeholder: "ex) 회원 가입 기능 구현"
     validations:
       required: true
+
+  - type: textarea
+    id: reason
+    attributes:
+      label: "🎯 기능이 필요한 이유"
+      description: "왜 이 기능이 필요한지 설명해주세요."
+      placeholder: "이 기능이 필요한 이유를 간략하게 적어주세요."
+
+  - type: textarea
+    id: plan
+    attributes:
+      label: "✨ 구현 계획"
+      description: "어떤 방식으로 구현할 계획인지 적어주세요."
+      placeholder: "구현 계획을 자세히 적어주세요."
 
   - type: textarea
     id: details
     attributes:
-      label: '상세 내용(Details)'
-      description: '이슈에 대해서 자세히 설명해주세요'
+      label: "📝 작업 상세 내용"
+      description: "기능 구현에 필요한 체크 리스트를 작성해주세요."
       value: |
-        - About Details
+        - [ ] 내용 1
+        - [ ] 내용 2
     validations:
       required: true
 
-  - type: textarea
-    id: tasks
+  - type: input
+    id: schedule
     attributes:
-      label: '체크리스트(Tasks)'
-      description: '해당 이슈에 대해 필요한 작업목록을 작성해주세요'
-      value: |
-        - [ ] Task1
-        - [ ] Task2
-    validations:
-      required: true
+      label: "🗓️ 개발 일정"
+      description: "예상 개발 기간을 입력해주세요."
+      placeholder: "00월 00일 ~ 00월 00일"
 
   - type: textarea
     id: references
     attributes:
-      label: '참조(References)'
-      description: '해당 이슈과 관련된 레퍼런스를 참조해주세요'
-      value: |
-        - Reference1
-    validations:
-      required: false
+      label: "🌱 나누고 싶은 점"
+      description: "기능 관련 나누고 싶은 내용을 작성해주세요."
+      placeholder: "참고한 자료나 의견을 공유해주세요."
