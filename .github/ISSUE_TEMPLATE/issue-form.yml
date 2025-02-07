@@ -3,9 +3,11 @@ on:
   issues:
     types:
       - opened
+
 permissions:
   issues: write   # GitHub Issue에 대한 쓰기 권한
   contents: read  # 코드베이스 읽기 권한
+
 jobs:
   create-issue:
     name: Create Jira issue
@@ -27,7 +29,7 @@ jobs:
         uses: stefanbuck/github-issue-praser@v3
         id: issue-parser
         with:
-          template-path: .github/ISSUE_TEMPLATE/issue_form.yml
+          template-path: .github/ISSUE_TEMPLATE/issue_form.yml  # 템플릿 경로 확인
 
       - name: Log Issue Parser
         run: |
@@ -77,5 +79,5 @@ jobs:
         uses: actions-cool/issues-helper@v3
         with:
           actions: "update-issue"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}  # 필요한 권한을 명시적으로 확인
           title: "${{ steps.create.outputs.issue }} ${{ github.event.issue.title }}"
