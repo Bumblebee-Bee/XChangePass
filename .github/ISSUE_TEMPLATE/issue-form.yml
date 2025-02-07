@@ -51,7 +51,8 @@ body:
     attributes:
       label: "🗓️ 시작일"
       description: "개발 시작일을 입력해주세요."
-      placeholder: "00월 00일"
+      placeholder: "yyyy-mm-dd"
+      type: "date"  # 날짜 입력 필드로 변경
     validations:
       required: true
 
@@ -60,7 +61,8 @@ body:
     attributes:
       label: "🗓️ 종료일"
       description: "개발 종료일을 입력해주세요."
-      placeholder: "00월 00일"
+      placeholder: "yyyy-mm-dd"
+      type: "date"  # 날짜 입력 필드로 변경
     validations:
       required: true
 
