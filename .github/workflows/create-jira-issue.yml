@@ -21,14 +21,15 @@ jobs:
           ref: main
 
       - name: Issue Parser
-        uses: stefanbuck/github-issue-praser@v3
+        uses: stefanbuck/github-issue-parser@v3  # 오타 수정 (praser -> parser)
         id: issue-parser
         with:
           template-path: .github/ISSUE_TEMPLATE/issue-form.yml
 
-      - name: Log Issue Parser
+      - name: Debug Parsed Outputs
         run: |
-          echo '${{ steps.issue-parser.outputs.jsonString }}'
+          echo "Parent Key: ${{ steps.issue-parser.outputs.parentKey }}"
+          echo "Schedule: ${{ steps.issue-parser.outputs.schedule }}"
 
       - name: Convert markdown to Jira Syntax
         uses: peter-evans/jira2md@v1
@@ -45,21 +46,27 @@ jobs:
         id: fields
         run: |
           if [[ -z "${{ steps.issue-parser.outputs.parentKey }}" ]]; then
-            # 부모 이슈가 없으면 Epic으로 생성
-            echo 'fields={ "customfield_10000": "${{ steps.issue-parser.outputs.schedule }}" }' >> $GITHUB_ENV
-            echo "issuetype=Epic" >> $GITHUB_ENV
+            # Epic 생성 (부모 이슈 없음)
+            echo 'issuetype=Epic' >> $GITHUB_ENV
+            JSON_FIELDS=$(jq -n \
+              --arg schedule "${{ steps.issue-parser.outputs.schedule }}" \
+              '{ customfield_10000: $schedule }')
           else
-            # 부모 이슈가 있으면 해당 부모 이슈 키를 포함
-            echo "fields={\"parent\": {\"key\": \"${{ steps.issue-parser.outputs.parentKey }}\"}, \"customfield_10000\": \"${{ steps.issue-parser.outputs.schedule }}\"}" >> $GITHUB_ENV
-            echo "issuetype=Subtask" >> $GITHUB_ENV
+            # Subtask 생성 (부모 이슈 존재)
+            echo 'issuetype=Subtask' >> $GITHUB_ENV
+            JSON_FIELDS=$(jq -n \
+              --arg parentKey "${{ steps.issue-parser.outputs.parentKey }}" \
+              --arg schedule "${{ steps.issue-parser.outputs.schedule }}" \
+              '{ parent: { key: $parentKey }, customfield_10000: $schedule }')
           fi
+          echo "fields=$JSON_FIELDS" >> $GITHUB_ENV
 
       - name: Create Issue
         id: create
         uses: atlassian/gajira-create@v3
         with:
           project: KAN
-          issuetype: ${{ env.issuetype }}  # 부모가 없으면 Epic, 있으면 Subtask
+          issuetype: ${{ env.issuetype }}
           summary: "${{ github.event.issue.title }}"
           description: "${{ steps.md2jira.outputs.output-text }}"
           fields: ${{ env.fields }}
