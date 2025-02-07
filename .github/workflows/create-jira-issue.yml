@@ -44,13 +44,20 @@ jobs:
       - name: Determine Fields
         id: fields
         run: |
-          if [[ -z "${{ steps.issue-parser.outputs.parentKey }}" ]]; then
-            echo 'fields={}' >> $GITHUB_ENV
-            echo "issuetype=Task" >> $GITHUB_ENV
-          else
-            echo 'fields={"parent": {"key": "${{ steps.issue-parser.outputs.parentKey }}"}}' >> $GITHUB_ENV
-            echo "issuetype=Subtask" >> $GITHUB_ENV
+          fields_json="{}"
+          issuetype="Task"
+
+          if [[ -n "${{ steps.issue-parser.outputs.parentKey }}" ]]; then
+            fields_json='{"parent": {"key": "${{ steps.issue-parser.outputs.parentKey }}"}}'
+            issuetype="Subtask"
           fi
+
+          if [[ -n "${{ steps.issue-parser.outputs.epicKey }}" ]]; then
+            fields_json=$(echo $fields_json | jq --arg epic "${{ steps.issue-parser.outputs.epicKey }}" '. + {"customfield_10014": $epic}')
+          fi
+
+          echo "fields=$fields_json" >> $GITHUB_ENV
+          echo "issuetype=$issuetype" >> $GITHUB_ENV
 
       - name: Create Issue
         id: create
