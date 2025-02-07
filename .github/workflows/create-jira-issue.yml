@@ -82,7 +82,7 @@ jobs:
             JSON_FIELDS=$(jq -n \
               --arg parentKey "${{ env.parentKey }}" \
               --arg feature_summary "${{ env.feature_summary }}" \
-              --arg schedule "${{ env.schedule }}" \
+              --arg start_date "$start_date_formatted" \
               '{ parent: { key: $parentKey }, summary: $feature_summary, customfield_10000: $start_date }')
           fi
           echo "fields=$(echo $JSON_FIELDS | jq -c .)" >> $GITHUB_ENV
