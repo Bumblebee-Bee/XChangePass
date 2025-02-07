@@ -62,8 +62,8 @@ jobs:
               --arg schedule "${{ env.schedule }}" \
               '{ customfield_10000: $schedule }')
           else
-            # 하위작업 생성 (부모 이슈 존재)
-            echo 'issuetype=하위작업' >> $GITHUB_ENV
+            # Subtask 생성 (부모 이슈 존재)
+            echo 'issuetype=Subtask' >> $GITHUB_ENV
             JSON_FIELDS=$(jq -n \
               --arg parentKey "${{ env.parentKey }}" \
               --arg schedule "${{ env.schedule }}" \
