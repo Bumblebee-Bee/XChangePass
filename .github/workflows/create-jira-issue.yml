@@ -45,10 +45,12 @@ jobs:
         id: fields
         run: |
           if [[ -z "${{ steps.issue-parser.outputs.parentKey }}" ]]; then
-            echo 'fields={}' >> $GITHUB_ENV
-            echo "issuetype=Task" >> $GITHUB_ENV
+            # 부모 이슈가 없으면 Epic으로 생성
+            echo 'fields={ "customfield_10000": "${{ steps.issue-parser.outputs.schedule }}" }' >> $GITHUB_ENV
+            echo "issuetype=Epic" >> $GITHUB_ENV
           else
-            echo 'fields={"parent": {"key": "${{ steps.issue-parser.outputs.parentKey }}"}}' >> $GITHUB_ENV
+            # 부모 이슈가 있으면 해당 부모 이슈 키를 포함
+            echo "fields={\"parent\": {\"key\": \"${{ steps.issue-parser.outputs.parentKey }}\"}, \"customfield_10000\": \"${{ steps.issue-parser.outputs.schedule }}\"}" >> $GITHUB_ENV
             echo "issuetype=Subtask" >> $GITHUB_ENV
           fi
 
@@ -57,7 +59,7 @@ jobs:
         uses: atlassian/gajira-create@v3
         with:
           project: KAN
-          issuetype: ${{ env.issuetype }}  # 부모가 없으면 Task, 있으면 Subtask
+          issuetype: ${{ env.issuetype }}  # 부모가 없으면 Epic, 있으면 Subtask
           summary: "${{ github.event.issue.title }}"
           description: "${{ steps.md2jira.outputs.output-text }}"
           fields: ${{ env.fields }}
