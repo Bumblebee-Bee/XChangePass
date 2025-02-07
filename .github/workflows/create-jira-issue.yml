@@ -38,7 +38,6 @@ jobs:
           input-text: |
             ### Github Issue Link
             - ${{ github.event.issue.html_url }}
-
             ${{ github.event.issue.body }}
           mode: md2jira
 
@@ -59,12 +58,12 @@ jobs:
               --arg schedule "${{ steps.issue-parser.outputs.schedule }}" \
               '{ parent: { key: $parentKey }, customfield_10000: $schedule }')
           fi
-          echo "fields=$JSON_FIELDS" >> $GITHUB_ENV
+          echo "fields=$(echo $JSON_FIELDS | jq -c .)" >> $GITHUB_ENV
 
       - name: Log Variables Before Creating Issue
         run: |
           echo "Issuetype: ${{ env.issuetype }}"
-          echo "Fields: ${{ env.fields }}"    
+          echo "Fields: ${{ env.fields }}"
 
       - name: Create Issue
         id: create
