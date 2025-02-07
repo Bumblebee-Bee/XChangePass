@@ -26,12 +26,21 @@ jobs:
         with:
           template-path: .github/ISSUE_TEMPLATE/issue-form.yml
 
+      - name: Parse JSON Output
+        id: parse-json
+        run: |
+          echo "Parsed Issue Body: ${{ steps.issue-parser.outputs.jsonString }}"
+          JSON_DATA='${{ steps.issue-parser.outputs.jsonString }}'
+          echo "parentKey=$(echo $JSON_DATA | jq -r '.parentKey')" >> $GITHUB_ENV
+          echo "feature_summary=$(echo $JSON_DATA | jq -r '.feature_summary')" >> $GITHUB_ENV
+          echo "schedule=$(echo $JSON_DATA | jq -r '.schedule')" >> $GITHUB_ENV
+
       - name: Debug Parsed Outputs
         run: |
           echo "Parsed Issue Body: ${{ steps.issue-parser.outputs.jsonString }}"
-          echo "Parent Key: ${{ steps.issue-parser.outputs.parentKey }}"
-          echo "Feature Summary: ${{ steps.issue-parser.outputs.feature_summary }}"
-          echo "Schedule: ${{ steps.issue-parser.outputs.schedule }}"
+          echo "Parent Key: ${{ env.parentKey }}"
+          echo "Feature Summary: ${{ env.feature_summary }}"
+          echo "Schedule: ${{ env.schedule }}"
 
       - name: Convert markdown to Jira Syntax
         uses: peter-evans/jira2md@v1
@@ -46,18 +55,18 @@ jobs:
       - name: Determine Fields
         id: fields
         run: |
-          if [[ -z "${{ steps.issue-parser.outputs.parentKey }}" ]]; then
+          if [[ -z "${{ env.parentKey }}" ]]; then
             # Epic 생성 (부모 이슈 없음)
             echo 'issuetype=Epic' >> $GITHUB_ENV
             JSON_FIELDS=$(jq -n \
-              --arg schedule "${{ steps.issue-parser.outputs.schedule }}" \
+              --arg schedule "${{ env.schedule }}" \
               '{ customfield_10000: $schedule }')
           else
             # Subtask 생성 (부모 이슈 존재)
             echo 'issuetype=Subtask' >> $GITHUB_ENV
             JSON_FIELDS=$(jq -n \
-              --arg parentKey "${{ steps.issue-parser.outputs.parentKey }}" \
-              --arg schedule "${{ steps.issue-parser.outputs.schedule }}" \
+              --arg parentKey "${{ env.parentKey }}" \
+              --arg schedule "${{ env.schedule }}" \
               '{ parent: { key: $parentKey }, customfield_10000: $schedule }')
           fi
           echo "fields=$(echo $JSON_FIELDS | jq -c .)" >> $GITHUB_ENV
