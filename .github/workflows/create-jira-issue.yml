@@ -60,8 +60,8 @@ jobs:
         id: fields
         run: |
           # GitHub Issue에서 받은 날짜값을 변수로 저장
-          start_date="${{ env.startdate }}"  # yyyy-mm-dd 형식으로 입력됨
-          end_date="${{ env.enddate }}"  # yyyy-mm-dd 형식으로 입력됨
+          start_date="${{ env.start_date }}"  # yyyy-mm-dd 형식으로 입력됨
+          end_date="${{ env.end_date }}"  # yyyy-mm-dd 형식으로 입력됨
 
           # 날짜 형식 변환 (필요에 따라 다른 형식으로 변환할 수도 있음)
           start_date_formatted=$(date -d "$start_date" +%Y-%m-%d)
@@ -75,10 +75,9 @@ jobs:
             echo 'issuetype=에픽' >> $GITHUB_ENV
             JSON_FIELDS=$(jq -n \
               --arg feature_summary "${{ env.feature_summary }}" \
-              --arg schedule "${{ env.schedule }}" \
               --arg start_date "$start_date_formatted" \
               --arg end_date "$end_date_formatted" \
-              '{ summary: $feature_summary, customfield_10000: $schedule, customfield_10015: $start_date, customfield_10017: $end_date, duedate: $end_date }')
+              '{ summary: $feature_summary, customfield_10015: $start_date, customfield_10017: $end_date, duedate: $end_date }')
           else
             # Subtask 생성 (부모 이슈 존재)
             echo 'issuetype=하위 작업' >> $GITHUB_ENV
@@ -89,7 +88,6 @@ jobs:
               '{ parent: { key: $parentKey }, summary: $feature_summary, customfield_10000: $schedule }')
           fi
           echo "fields=$(echo $JSON_FIELDS | jq -c .)" >> $GITHUB_ENV
-      
 
       - name: Log Variables Before Creating Issue
         run: |
