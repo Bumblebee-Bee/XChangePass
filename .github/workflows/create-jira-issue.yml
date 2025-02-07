@@ -33,7 +33,6 @@ jobs:
           JSON_DATA='${{ steps.issue-parser.outputs.jsonString }}'
           echo "parentKey=$(echo $JSON_DATA | jq -r '.parentKey')" >> $GITHUB_ENV
           echo "feature_summary=$(echo $JSON_DATA | jq -r '.feature_summary')" >> $GITHUB_ENV
-          echo "schedule=$(echo $JSON_DATA | jq -r '.schedule')" >> $GITHUB_ENV
           echo "start_date=$(echo $JSON_DATA | jq -r '.startdate')" >> $GITHUB_ENV
           echo "end_date=$(echo $JSON_DATA | jq -r '.enddate')" >> $GITHUB_ENV
 
@@ -42,7 +41,6 @@ jobs:
           echo "Parsed Issue Body: ${{ steps.issue-parser.outputs.jsonString }}"
           echo "Parent Key: ${{ env.parentKey }}"
           echo "Feature Summary: ${{ env.feature_summary }}"
-          echo "Schedule: ${{ env.schedule }}"
           echo "Start Date: ${{ env.start_date }}"
           echo "End Date: ${{ env.end_date }}"
 
@@ -85,7 +83,7 @@ jobs:
               --arg parentKey "${{ env.parentKey }}" \
               --arg feature_summary "${{ env.feature_summary }}" \
               --arg schedule "${{ env.schedule }}" \
-              '{ parent: { key: $parentKey }, summary: $feature_summary, customfield_10000: $schedule }')
+              '{ parent: { key: $parentKey }, summary: $feature_summary, customfield_10000: $start_date }')
           fi
           echo "fields=$(echo $JSON_FIELDS | jq -c .)" >> $GITHUB_ENV
 
