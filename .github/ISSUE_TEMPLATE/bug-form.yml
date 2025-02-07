@@ -1,8 +1,7 @@
 name: Bug template
-about: 버그 해결 시 사용해주세요
+description: 버그 해결 시 사용해주세요
 title: "[Fix]"
-labels: "🐞 BugFix"
-assignees: ''
+labels: ["🐞 BugFix"]
 
 body:
   - type: input

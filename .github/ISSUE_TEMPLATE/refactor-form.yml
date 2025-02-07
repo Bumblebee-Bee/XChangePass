@@ -1,8 +1,7 @@
 name: Refactor template
-about: 리팩토링 작업 사용해주세요.
+description: 리팩토링 작업 사용해주세요.
 title: "[Refactor] "
-labels: "🔨 Refactor"
-assignees: ''
+labels: ["🔨 Refactor"]
 
 body:
   - type: input
