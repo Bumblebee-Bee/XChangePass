@@ -324,6 +324,7 @@ gradle-app.setting
 
 # application.properties
 src/main/resources/application.properties
+src/main/resources/application.yml
 src/test/resources/application-test.properties
 
 
