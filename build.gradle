@@ -24,17 +24,35 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-websocket'
-    compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'com.h2database:h2'
-    runtimeOnly 'org.postgresql:postgresql'
-    annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // Spring Boot 핵심 기능 라이브러리
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'   // JPA 및 Hibernate를 통한 데이터 접근 지원
+    implementation 'org.springframework.boot:spring-boot-starter-validation' // 데이터 검증을 위한 라이브러리 (Bean Validation)
+    implementation 'org.springframework.boot:spring-boot-starter-web'        // 웹 애플리케이션 개발을 위한 라이브러리 (Spring MVC 포함)
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'  // WebSocket 기능을 제공하는 라이브러리
+
+    // Spring Security (인증 및 인가 관련 보안 기능)
+    implementation 'org.springframework.boot:spring-boot-starter-security'   // Spring Security 기본 설정 및 기능 제공
+
+    // JWT (JSON Web Token) 관련 라이브러리
+    implementation 'io.jsonwebtoken:jjwt:0.11.5'                             // JWT 생성 및 검증을 위한 라이브러리
+
+    // 테스트
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'   // Spring Boot의 테스트 도구 모음 (JUnit, Mockito 포함)
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'             // JUnit 플랫폼 런처 (테스트 실행 환경 제공)
+
+    // 데이터베이스
+    runtimeOnly 'com.h2database:h2'                                          // 인메모리 데이터베이스 H2 (테스트 및 개발 환경용)
+    runtimeOnly 'org.postgresql:postgresql'                                  // PostgreSQL 데이터베이스 드라이버 (운영 환경에서 사용)
+
+    // 쿼리DSL
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'                 // QueryDSL의 JPA 모듈
+    annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"            // QueryDSL 코드 자동 생성 도구
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"          // Jakarta Annotation API (자바 표준 어노테이션 지원)
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"        // Jakarta Persistence API (JPA 관련 표준 API 지원)
+
+    // 기타
+    compileOnly 'org.projectlombok:lombok'                                   // Lombok (Getter, Setter, Constructor 자동 생성)
+    annotationProcessor 'org.projectlombok:lombok'                           // Lombok 사용을 위한 어노테이션 프로세서
 }
 
 tasks.named('test') {
