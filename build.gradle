@@ -34,7 +34,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'   // Spring Security 기본 설정 및 기능 제공
 
     // JWT (JSON Web Token) 관련 라이브러리
-    implementation 'io.jsonwebtoken:jjwt:0.11.5'                             // JWT 생성 및 검증을 위한 라이브러리
+    implementation 'io.jsonwebtoken:jjwt:0.12.3'                             // JWT 생성 및 검증을 위한 라이브러리
 
     // 테스트
     testImplementation 'org.springframework.boot:spring-boot-starter-test'   // Spring Boot의 테스트 도구 모음 (JUnit, Mockito 포함)
@@ -42,7 +42,7 @@ dependencies {
 
     // 데이터베이스
     runtimeOnly 'com.h2database:h2'                                          // 인메모리 데이터베이스 H2 (테스트 및 개발 환경용)
-    runtimeOnly 'org.postgresql:postgresql'                                  // PostgreSQL 데이터베이스 드라이버 (운영 환경에서 사용)
+    runtimeOnly 'org.postgresql:postgresql:42.5.2'                           // PostgreSQL 데이터베이스 드라이버 (운영 환경에서 사용)
 
     // 쿼리DSL
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'                 // QueryDSL의 JPA 모듈
