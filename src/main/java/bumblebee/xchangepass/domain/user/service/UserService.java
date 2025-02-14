@@ -5,6 +5,7 @@ import bumblebee.xchangepass.domain.user.dto.request.UserUpdateRequest;
 import bumblebee.xchangepass.domain.user.dto.response.UserResponse;
 import bumblebee.xchangepass.domain.user.entity.User;
 import bumblebee.xchangepass.domain.user.repository.UserRepository;
+import bumblebee.xchangepass.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ public class UserService {
         boolean present = byUserEmail.isPresent();
 
         if (present) {
-            throw ErrorCode.MEMBER_DUPLICATE_EMAIL.commonException();
+            throw ErrorCode.USER_DUPLICATE_EMAIL.commonException();
         }
 
         userRepository.save(request.toEntity(bCryptPasswordEncoder));
@@ -32,27 +33,27 @@ public class UserService {
 
     public UserResponse read(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(ErrorCode.MEMBER_NOT_FOUND::commonException);
+                .orElseThrow(ErrorCode.USER_NOT_FOUND::commonException);
 
         return new UserResponse(user);
     }
 
     public UserResponse update(Long userId, UserUpdateRequest request) {
         User user = userRepository.findById(userId)
-                .orElseThrow(ErrorCode.MEMBER_NOT_FOUND::commonException);
+                .orElseThrow(ErrorCode.USER_NOT_FOUND::commonException);
 
         try {
             user.updateUser(request);
             userRepository.save(user);
         } catch (Exception e) {
-            throw ErrorCode.MEMBER_UPDATE_EXCEPTION.commonException();
+            throw ErrorCode.USER_UPDATE_EXCEPTION.commonException();
         }
         return new UserResponse(user);
     }
 
     public void delete(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(ErrorCode.MEMBER_NOT_FOUND::commonException);
+                .orElseThrow(ErrorCode.USER_NOT_FOUND::commonException);
 
         userRepository.delete(user);
     }
