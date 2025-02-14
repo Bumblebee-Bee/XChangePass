@@ -53,6 +53,7 @@ dependencies {
     // 기타
     compileOnly 'org.projectlombok:lombok'                                   // Lombok (Getter, Setter, Constructor 자동 생성)
     annotationProcessor 'org.projectlombok:lombok'                           // Lombok 사용을 위한 어노테이션 프로세서
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0' // Swagger Ui
 }
 
 tasks.named('test') {
