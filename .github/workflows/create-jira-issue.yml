@@ -21,14 +21,28 @@ jobs:
           ref: main
 
       - name: Issue Parser
-        uses: stefanbuck/github-issue-praser@v3
+        uses: stefanbuck/github-issue-parser@v3
         id: issue-parser
         with:
-          template-path: .github/ISSUE_TEMPLATE/issue_form.yml
+          template-path: .github/ISSUE_TEMPLATE/issue-form.yml
 
-      - name: Log Issue Parser
+      - name: Parse JSON Output
+        id: parse-json
         run: |
-          echo '${{ steps.issue-parser.outputs.jsonString }}'
+          echo "Parsed Issue Body: ${{ steps.issue-parser.outputs.jsonString }}"
+          JSON_DATA='${{ steps.issue-parser.outputs.jsonString }}'
+          echo "parentKey=$(echo $JSON_DATA | jq -r '.parentKey')" >> $GITHUB_ENV
+          echo "feature_summary=$(echo $JSON_DATA | jq -r '.feature_summary')" >> $GITHUB_ENV
+          echo "start_date=$(echo $JSON_DATA | jq -r '.startdate')" >> $GITHUB_ENV
+          echo "end_date=$(echo $JSON_DATA | jq -r '.enddate')" >> $GITHUB_ENV
+
+      - name: Debug Parsed Outputs
+        run: |
+          echo "Parsed Issue Body: ${{ steps.issue-parser.outputs.jsonString }}"
+          echo "Parent Key: ${{ env.parentKey }}"
+          echo "Feature Summary: ${{ env.feature_summary }}"
+          echo "Start Date: ${{ env.start_date }}"
+          echo "End Date: ${{ env.end_date }}"
 
       - name: Convert markdown to Jira Syntax
         uses: peter-evans/jira2md@v1
@@ -37,27 +51,53 @@ jobs:
           input-text: |
             ### Github Issue Link
             - ${{ github.event.issue.html_url }}
-
             ${{ github.event.issue.body }}
           mode: md2jira
 
       - name: Determine Fields
         id: fields
         run: |
-          if [[ -z "${{ steps.issue-parser.outputs.parentKey }}" ]]; then
-            echo 'fields={}' >> $GITHUB_ENV
-            echo "issuetype=Task" >> $GITHUB_ENV
+          # GitHub Issue에서 받은 날짜값을 변수로 저장
+          start_date="${{ env.start_date }}"  # yyyy-mm-dd 형식으로 입력됨
+          end_date="${{ env.end_date }}"  # yyyy-mm-dd 형식으로 입력됨
+
+          # 날짜 형식 변환 (필요에 따라 다른 형식으로 변환할 수도 있음)
+          start_date_formatted=$(date -d "$start_date" +%Y-%m-%d)
+          end_date_formatted=$(date -d "$end_date" +%Y-%m-%d)
+
+          echo "start_date=$start_date_formatted" >> $GITHUB_ENV
+          echo "end_date=$end_date_formatted" >> $GITHUB_ENV
+
+          if [[ -z "${{ env.parentKey }}" ]]; then
+            # Epic 생성 (부모 이슈 없음)
+            echo 'issuetype=에픽' >> $GITHUB_ENV
+            JSON_FIELDS=$(jq -n \
+              --arg feature_summary "${{ env.feature_summary }}" \
+              --arg start_date "$start_date_formatted" \
+              --arg end_date "$end_date_formatted" \
+              '{ summary: $feature_summary, customfield_10015: $start_date, customfield_10017: $end_date, duedate: $end_date }')
           else
-            echo 'fields={"parent": {"key": "${{ steps.issue-parser.outputs.parentKey }}"}}' >> $GITHUB_ENV
-            echo "issuetype=Subtask" >> $GITHUB_ENV
+            # Child Issue 생성 (Epic 하위 이슈)
+            echo 'issuetype=Task' >> $GITHUB_ENV  # 여기서 하위 이슈 유형을 지정
+            JSON_FIELDS=$(jq -n \
+              --arg parentKey "${{ env.parentKey }}" \
+              --arg feature_summary "${{ env.feature_summary }}" \
+              --arg start_date "$start_date_formatted" \
+              '{ parent: { key: $parentKey }, summary: $feature_summary, customfield_10000: $start_date }')
           fi
+          echo "fields=$(echo $JSON_FIELDS | jq -c .)" >> $GITHUB_ENV
+
+      - name: Log Variables Before Creating Issue
+        run: |
+          echo "Issuetype: ${{ env.issuetype }}"
+          echo "Fields: ${{ env.fields }}"
 
       - name: Create Issue
         id: create
         uses: atlassian/gajira-create@v3
         with:
           project: KAN
-          issuetype: ${{ env.issuetype }}  # 부모가 없으면 Task, 있으면 Subtask
+          issuetype: ${{ env.issuetype }}
           summary: "${{ github.event.issue.title }}"
           description: "${{ steps.md2jira.outputs.output-text }}"
           fields: ${{ env.fields }}

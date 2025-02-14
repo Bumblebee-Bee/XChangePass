@@ -1,0 +1,68 @@
+name: Refactor template
+description: 리팩토링 작업 사용해주세요.
+title: "[Refactor] "
+labels: ["🔨 Refactor"]
+
+body:
+  - type: input
+    id: feature_summary
+    attributes:
+      label: "⚒️ 리팩토링 할 기능"
+      description: "리팩토링할 기능에 대해 간단히 적어주세요."
+      placeholder: "ex) 데이터베이스 쿼리 리팩토링"
+    validations:
+      required: true
+
+  - type: textarea
+    id: reason
+    attributes:
+      label: "🪜 변경 전 상황과 변경 이유"
+      description: "변경 전의 상황과 변경하려는 이유를 작성해주세요."
+      placeholder: "예: 기존 쿼리의 성능 이슈"
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_changes
+    attributes:
+      label: "✨ 변경 후 예상"
+      description: "변경 후 예상되는 결과나 구조를 작성해주세요."
+      placeholder: "예: 성능 개선, 쿼리 최적화"
+    validations:
+      required: true
+
+  - type: textarea
+    id: details
+    attributes:
+      label: "📝 작업 상세 내용"
+      description: "리팩토링에 필요한 체크리스트를 작성해주세요."
+      value: |
+        - [ ] 내용 1
+        - [ ] 내용 2
+    validations:
+      required: true
+
+  - type: input
+    id: startdate
+    attributes:
+      label: "🗓️ 시작일"
+      description: "리팩토링 작업 시작일을 입력해주세요."
+      placeholder: "yyyy-mm-dd"  # 날짜 형식 안내
+    validations:
+      required: true
+
+  - type: input
+    id: enddate
+    attributes:
+      label: "🗓️ 종료일"
+      description: "리팩토링 작업 종료일을 입력해주세요."
+      placeholder: "yyyy-mm-dd"  # 날짜 형식 안내
+    validations:
+      required: true
+
+  - type: textarea
+    id: references
+    attributes:
+      label: "🌱 나누고 싶은 점"
+      description: "리팩토링 관련 나누고 싶은 의견이나 참고 자료를 공유해주세요."
+      placeholder: "참고한 자료나 의견을 공유해주세요."

@@ -1,0 +1,39 @@
+name: Bug template
+description: 버그 해결 시 사용해주세요
+title: "[Fix]"
+labels: ["🐞 BugFix"]
+
+body:
+  - type: input
+    id: bug_description
+    attributes:
+      label: "🔍 어떤 버그인가요?"
+      description: "버그에 대한 간결한 설명을 작성해주세요."
+      placeholder: "예: 페이지가 로드되지 않음"
+    validations:
+      required: true
+
+  - type: textarea
+    id: bug_occurrence
+    attributes:
+      label: "🕒 어떤 상황에서 발생한 버그인가요?"
+      description: "버그 발생 상황을 (가능하면) Given-When-Then 형식으로 서술해주세요."
+      placeholder: "예: Given 사용자가 로그인 중일 때, When 페이지를 제출하면, Then 오류가 발생함"
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_result
+    attributes:
+      label: "🎯 예상 결과"
+      description: "예상한 정상 결과가 무엇인지 설명해주세요."
+      placeholder: "예: 페이지가 정상적으로 로드되어야 함"
+    validations:
+      required: true
+
+  - type: textarea
+    id: references
+    attributes:
+      label: "📚 참고할 만한 자료 (선택)"
+      description: "버그와 관련된 추가 자료나 링크를 공유해주세요."
+      placeholder: "예: 스크린샷, 오류 로그 등"
