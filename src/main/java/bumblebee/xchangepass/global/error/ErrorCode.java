@@ -12,7 +12,11 @@ public enum ErrorCode {
     USER_DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "L005", "중복된 이메일 입니다."),
     USER_DUPLICATE_NICK_NAME(HttpStatus.BAD_REQUEST, "L006", "중복된 닉네임 입니다."),
     USER_DUPLICATE_PHONENUMBER(HttpStatus.BAD_REQUEST, "L007", "중복된 전화번호 입니다."),
-    USER_NOT_MODIFY(HttpStatus.BAD_REQUEST,"L008","회원 수정 실패");
+    USER_NOT_MODIFY(HttpStatus.BAD_REQUEST,"L008","회원 수정 실패"),
+
+    //Balance
+    BALANCE_NOT_FOUND(HttpStatus.BAD_REQUEST, "M005-1", "존재하지 않는 지갑입니다.");
+
 
     private final String code;
     private final String message;
