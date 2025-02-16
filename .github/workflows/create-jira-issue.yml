@@ -19,6 +19,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: main
+          
+      - name: Install jq (if not available)
+        run: sudo apt-get install -y jq
 
       - name: Issue Parser
         uses: stefanbuck/github-issue-parser@v3
@@ -29,12 +32,12 @@ jobs:
       - name: Parse JSON Output
         id: parse-json
         run: |
-          echo "Parsed Issue Body: ${{ steps.issue-parser.outputs.jsonString }}"
+          echo 'Parsed Issue Body: ${{ steps.issue-parser.outputs.jsonString }}'
 
-          # JSON 데이터를 JSON 파일로 저장하여 처리 (안전한 방식)
+          # JSON 파일로 저장하여 안전하게 처리
           echo '${{ steps.issue-parser.outputs.jsonString }}' > json_output.json
 
-          # jq로 JSON 값을 파싱하여 GitHub Actions 환경 변수에 저장
+          # jq를 사용하여 JSON 값을 환경 변수에 저장
           echo "parentKey=$(jq -r '.parentKey' json_output.json)" >> $GITHUB_ENV
           echo "feature_summary=$(jq -r '.feature_summary' json_output.json)" >> $GITHUB_ENV
           echo "start_date=$(jq -r '.startdate' json_output.json)" >> $GITHUB_ENV
