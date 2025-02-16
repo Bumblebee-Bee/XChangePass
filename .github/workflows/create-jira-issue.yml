@@ -30,11 +30,18 @@ jobs:
         id: parse-json
         run: |
           echo "Parsed Issue Body: ${{ steps.issue-parser.outputs.jsonString }}"
-          JSON_DATA='${{ steps.issue-parser.outputs.jsonString }}'
-          echo "parentKey=$(echo $JSON_DATA | jq -r '.parentKey')" >> $GITHUB_ENV
-          echo "feature_summary=$(echo $JSON_DATA | jq -r '.feature_summary')" >> $GITHUB_ENV
-          echo "start_date=$(echo $JSON_DATA | jq -r '.startdate')" >> $GITHUB_ENV
-          echo "end_date=$(echo $JSON_DATA | jq -r '.enddate')" >> $GITHUB_ENV
+            
+          # JSON 데이터를 직접 환경 변수에 할당 (여기서 작은따옴표 제거)
+          JSON_DATA="${{ steps.issue-parser.outputs.jsonString }}"
+            
+          # JSON 데이터를 JSON 파일로 저장하여 처리 (안전한 방식)
+          echo "$JSON_DATA" > json_output.json
+            
+          # jq로 JSON 값을 파싱하여 GitHub Actions 환경 변수에 저장
+          echo "parentKey=$(jq -r '.parentKey' json_output.json)" >> $GITHUB_ENV
+          echo "feature_summary=$(jq -r '.feature_summary' json_output.json)" >> $GITHUB_ENV
+          echo "start_date=$(jq -r '.startdate' json_output.json)" >> $GITHUB_ENV
+          echo "end_date=$(jq -r '.enddate' json_output.json)" >> $GITHUB_ENV
 
       - name: Debug Parsed Outputs
         run: |
