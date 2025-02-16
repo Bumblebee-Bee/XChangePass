@@ -45,11 +45,16 @@ jobs:
 
       - name: Debug Parsed Outputs
         run: |
-          echo "Parsed Issue Body: ${{ steps.issue-parser.outputs.jsonString }}"
+          echo "🔍 Debugging Parsed Outputs..."
+          echo "-----------------------------------"
+          echo "Parsed Issue Body from JSON File:"
+          cat json_output.json | jq .
+          echo "-----------------------------------"
           echo "Parent Key: ${{ env.parentKey }}"
           echo "Feature Summary: ${{ env.feature_summary }}"
           echo "Start Date: ${{ env.start_date }}"
           echo "End Date: ${{ env.end_date }}"
+          echo "-----------------------------------"
 
       - name: Convert markdown to Jira Syntax
         uses: peter-evans/jira2md@v1
