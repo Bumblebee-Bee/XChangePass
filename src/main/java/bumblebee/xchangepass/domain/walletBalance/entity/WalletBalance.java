@@ -41,7 +41,11 @@ public class WalletBalance {
     @LastModifiedDate
     public LocalDateTime currencyModifiedAt;
 
-    public void changeBalance(BigDecimal balance) {
+    public void addBalance(BigDecimal balance) {
         this.balance = this.balance.add(balance);
+    }
+
+    public void subtractBalance(BigDecimal balance) {
+        this.balance = this.balance.subtract(balance);
     }
 }
