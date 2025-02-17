@@ -8,6 +8,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 
+import java.util.Currency;
 import java.util.List;
 
 @Repository
@@ -27,5 +28,15 @@ public class WalletBalanceRepositoryCustomImpl implements WalletBalanceRepositor
                 .selectFrom(walletBalance)
                 .where(walletBalance.wallet.walletId.eq(walletId))
                 .fetch();
+    }
+
+    @Override
+    public WalletBalance findByWalletIdAndCurrency(Long walletId, Currency currency) {
+        QWalletBalance walletBalance = QWalletBalance.walletBalance;
+
+        return queryFactory
+                .selectFrom(walletBalance)
+                .where(walletBalance.wallet.walletId.eq(walletId), walletBalance.currency.eq(currency))
+                .fetchOne();
     }
 }
