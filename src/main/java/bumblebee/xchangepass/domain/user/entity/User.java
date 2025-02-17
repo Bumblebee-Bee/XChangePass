@@ -96,12 +96,4 @@ public class User {
     public String getUserPhoneNumber(){
         return this.userPhoneNumber.getValue();
     }
-
-    public void updateUser(final UserUpdateRequest userUpdateRequest){
-        this.userName = new UserName(userUpdateRequest.name());
-        this.userNickname = new UserNickname(userUpdateRequest.nickName());
-        this.userPhoneNumber = new UserPhoneNumber(userUpdateRequest.phoneNumber());
-        this.userAge = userUpdateRequest.age();
-        this.userSex = userUpdateRequest.sex();
-    }
 }

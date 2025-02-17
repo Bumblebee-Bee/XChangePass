@@ -20,7 +20,7 @@ public class UserEmail {
     public static final String ERR_MSG = "이메일 형식이 올바르지 않습니다.";
     private static final Pattern PATTERN = Pattern.compile(REGEX);
 
-    @Column(name = "user_email", nullable = false, length = 100)
+    @Column(name = "user_email", nullable = false, length = 100, unique = true)
     private String value;
 
     public UserEmail(final String email) {
