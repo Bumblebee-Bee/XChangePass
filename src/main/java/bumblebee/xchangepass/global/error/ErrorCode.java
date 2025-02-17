@@ -15,7 +15,8 @@ public enum ErrorCode {
     USER_NOT_MODIFY(HttpStatus.BAD_REQUEST,"L008","회원 수정 실패"),
 
     //Balance
-    BALANCE_NOT_FOUND(HttpStatus.BAD_REQUEST, "M005-1", "존재하지 않는 지갑입니다.");
+    BALANCE_NOT_FOUND(HttpStatus.BAD_REQUEST, "M005-1", "존재하지 않는 지갑입니다."),
+    BALANCE_NOT_AVAILABLE(HttpStatus.BAD_REQUEST, "M005-2", "충전 금액이 부족합니다.");
 
 
     private final String code;
