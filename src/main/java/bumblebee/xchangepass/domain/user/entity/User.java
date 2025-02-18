@@ -1,18 +1,14 @@
 package bumblebee.xchangepass.domain.user.entity;
 
-import bumblebee.xchangepass.domain.user.dto.request.UserUpdateRequest;
 import bumblebee.xchangepass.domain.user.entity.value.*;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static lombok.AccessLevel.PROTECTED;
@@ -79,21 +75,5 @@ public class User {
         this.userAge = userAge;
         this.userSex = userSex;
         this.userType = Role.ROLE_USER;
-    }
-
-    public String getUserEmail(){
-        return this.userEmail.getValue();
-    }
-    public String getUserPwd(){
-        return this.userPwd.getValue();
-    }
-    public String getUserName() {
-        return userName.getValue();
-    }
-    public String getUserNickname(){
-        return this.userNickname.getValue();
-    }
-    public String getUserPhoneNumber(){
-        return this.userPhoneNumber.getValue();
     }
 }
