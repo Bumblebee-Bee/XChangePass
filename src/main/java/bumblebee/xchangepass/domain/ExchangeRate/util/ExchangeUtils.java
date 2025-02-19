@@ -122,13 +122,14 @@ public class ExchangeUtils {
     public String getSearchdate() {
         LocalDate currentDate = LocalDate.now();
         DayOfWeek dayOfWeek = currentDate.getDayOfWeek();
-        // 토요일
-        if (dayOfWeek.getValue() == 6)
-            return currentDate.minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        // 일요일
-        if (dayOfWeek.getValue() == 7)
-            return currentDate.minusDays(2).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
-        return currentDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        // 월요일이면 금요일 날짜 반환 (주말 제외)
+        if (dayOfWeek == DayOfWeek.MONDAY) {
+            return currentDate.minusDays(3).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        }
+
+        // 나머지 요일(화~일)은 하루 전날 반환
+        return currentDate.minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
     }
+
 }
