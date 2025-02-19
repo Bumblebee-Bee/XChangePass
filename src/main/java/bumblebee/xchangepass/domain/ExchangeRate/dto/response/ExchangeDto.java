@@ -8,7 +8,6 @@ import lombok.ToString;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Getter
 public record ExchangeDto (
      Integer result,
      String cur_unit, // 통화코드
