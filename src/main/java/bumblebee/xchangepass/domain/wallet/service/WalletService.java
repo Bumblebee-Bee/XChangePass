@@ -57,38 +57,39 @@ public class WalletService {
 
     @Transactional
     public void transfer(WalletTransferRequest request) {
-        Wallet wallet = walletRepository.findByUserId(request.senderId());
+        Wallet fromWallet = walletRepository.findByUserId(request.senderId());
+        Wallet toWallet = walletRepository.findByUserId(request.receiverId());
 
-        WalletBalance balance = balanceRepository.findByWalletIdAndCurrency(wallet.walletId, request.fromCurrency());
+        WalletBalance fromBalance = balanceRepository.findByWalletIdAndCurrency(fromWallet.walletId, request.fromCurrency());
+        WalletBalance toBalance = balanceRepository.findByWalletIdAndCurrency(toWallet.walletId, request.toCurrency());
 
-        if ((request.transferAmount().compareTo(balance.getBalance())) > 0) {
+        BigDecimal transferAmount = request.transferAmount();
+
+        if ((transferAmount.compareTo(fromBalance.getBalance())) > 0) {
             throw ErrorCode.BALANCE_NOT_AVAILABLE.commonException();
         }
 
-        balanceDeduction(balance, request.transferAmount());
-
-        BigDecimal transferAmount = request.transferAmount();
+        fromBalance.subtractBalance(transferAmount);
+        balanceRepository.save(fromBalance);
 
         if (!request.fromCurrency().equals(request.toCurrency())) {
             //환전
 
         }
 
-        userTransfer(request.receiverId(), transferAmount, request.toCurrency());
+
+        toBalance.addBalance(transferAmount);
+        balanceRepository.save(toBalance);
 
     }
 
-    private void balanceDeduction(WalletBalance balance, BigDecimal transferAmount) {
-        balance.subtractBalance(transferAmount);
-        balanceRepository.save(balance);
+    private void withdraw(WalletBalance balance, BigDecimal transferAmount) {
+
     }
 
 
     private void userTransfer(Long receiverId, BigDecimal transferAmount, Currency currency) {
-        Wallet wallet = walletRepository.findByUserId(receiverId);
-        WalletBalance balance = balanceRepository.findByWalletIdAndCurrency(wallet.walletId, currency);
-        balance.addBalance(transferAmount);
-        balanceRepository.save(balance);
+
     }
 
     @Transactional
