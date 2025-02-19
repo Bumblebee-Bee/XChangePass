@@ -15,10 +15,10 @@ jobs:
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
           JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
 
-      - name: Checkout main code
+      - name: Checkout develop code
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: develop
           
       - name: Install jq (if not available)
         run: sudo apt-get install -y jq
@@ -116,6 +116,28 @@ jobs:
 
       - name: Log created issue
         run: echo "Jira Issue ${{ steps.create.outputs.issue }} was created"
+
+      - name: Transition Issue to In Progress
+        run: |
+          # Jira API 엔드포인트 및 인증 정보
+          jira_url="${{ env.JIRA_BASE_URL }}"
+          username="${{ env.JIRA_USER_EMAIL }}"  # Jira 계정 이메일
+          api_token="${{ env.JIRA_API_TOKEN }}"  # Jira API 토큰
+            
+          issue_key="${{ steps.create.outputs.issue }}"
+          transition_id="21"  # '진행 중' 상태에 해당하는 Transition ID (실제 Jira에서 확인 필요)
+            
+          # 이슈 상태를 "진행 중"으로 변경
+          curl -X POST \
+            -u "${username}:${api_token}" \
+            -H "Content-Type: application/json" \
+            -d '{
+                   "transition": {
+                     "id": "'"$transition_id"'"
+                  }
+                }' \
+            "${jira_url}/rest/api/2/issue/${issue_key}/transitions"
+          echo "Transitioned Jira Issue $issue_key to In Progress"  
 
       - name: Checkout develop code
         uses: actions/checkout@v4

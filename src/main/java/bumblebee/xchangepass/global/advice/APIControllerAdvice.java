@@ -18,7 +18,7 @@ public class APIControllerAdvice {
 
     @ExceptionHandler(CommonException.class)
     public ResponseEntity<ErrorResponse> commonException(CommonException e) {
-        HttpStatus statusCode = e.getErrorCode().getStatus(); // 에러코드 W001-3 익셉션 ?
+        HttpStatus statusCode = e.getErrorCode().getStatus();
         ErrorResponse response = ErrorResponse.builder()
                 .code(e.getErrorCode().getCode())
                 .message(e.getErrorCode().getMessage())

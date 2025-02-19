@@ -20,7 +20,7 @@ public class UserNickname {
     public static final String ERR_MSG = "닉네임은 특수문자를 제외한 2~10자리여야 합니다.";
     private static final Pattern PATTERN = Pattern.compile(REGEX);
 
-    @Column(name = "user_nickname", nullable = false, length = 30)
+    @Column(name = "user_nickname", nullable = false, length = 30, unique = true)
     private String value;
 
     public UserNickname(final String nickname) {
