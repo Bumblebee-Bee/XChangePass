@@ -1,12 +1,12 @@
-package bumblebee.xchangepass.domain.user.login;
+package bumblebee.xchangepass.global.security.v1.login;
 
-import bumblebee.xchangepass.domain.user.login.dto.response.UserLoginResponse;
+import bumblebee.xchangepass.domain.user.dto.response.UserLoginResponse;
 import bumblebee.xchangepass.domain.user.service.UserService;
 import bumblebee.xchangepass.global.error.ErrorCode;
 import bumblebee.xchangepass.global.security.jwt.JwtProvider;
-import bumblebee.xchangepass.domain.user.login.dto.request.LoginRequest;
-import bumblebee.xchangepass.domain.user.login.dto.response.LoginResponse;
-import bumblebee.xchangepass.domain.refresh.RefreshTokenRepository;
+import bumblebee.xchangepass.global.security.v1.refresh.RefreshToken;
+import bumblebee.xchangepass.global.security.v1.login.dto.LoginRequest;
+import bumblebee.xchangepass.global.security.v1.login.dto.LoginResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,8 +22,6 @@ public class LoginService{
 
     private final JwtProvider jwtProvider;
 
-    private final RefreshTokenRepository refreshTokenRepository;
-
     @Transactional
     public LoginResponse login(final LoginRequest request) {
         System.out.println("loginRequestDTO = " + request);
@@ -37,9 +35,12 @@ public class LoginService{
         // jwt 토큰 생성
         String accessToken = jwtProvider.generateAccessToken(userInfo.userId());
 
+        // 기존에 가지고 있는 사용자의 refresh token 제거
+        RefreshToken.removeUserRefreshToken(userInfo.userId());
+
         // refresh token 생성 후 저장
         String refreshToken = jwtProvider.generateRefreshToken(userInfo.userId());
-        refreshTokenRepository.saveRefreshToken(refreshToken, userInfo.userId());
+        RefreshToken.putRefreshToken(refreshToken, userInfo.userId());
 
         return LoginResponse.builder()
                 .accessToken(accessToken)
@@ -47,13 +48,4 @@ public class LoginService{
                 .build();
     }
 
-    public void logout(String refreshToken) {
-        // "Bearer " 접두사 제거
-        if (refreshToken.startsWith("Bearer ")) {
-            refreshToken = refreshToken.substring(7);
-        }
-
-        Long userId = refreshTokenRepository.getUserIdFromRefreshToken(refreshToken);
-        refreshTokenRepository.deleteRefreshToken(userId);
-    }
 }

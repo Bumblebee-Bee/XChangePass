@@ -1,17 +1,16 @@
-package bumblebee.xchangepass.domain.refresh;
+package bumblebee.xchangepass.global.security.v1.refresh;
 
 import bumblebee.xchangepass.global.error.ErrorCode;
 import bumblebee.xchangepass.global.security.jwt.JwtProvider;
-import bumblebee.xchangepass.domain.refresh.dto.RefreshTokenResponse;
+import bumblebee.xchangepass.global.security.v1.refresh.dto.RefreshTokenResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class RefreshTokenService {
+public class RefreshTokenService  {
 
     private final JwtProvider jwtProvider;
-    private final RefreshTokenRepository refreshTokenRepository;
 
     /**
      * refresh token을 이용하여 access token, refresh token 재발급
@@ -23,15 +22,18 @@ public class RefreshTokenService {
         // refresh token 유효성 검증
         checkRefreshToken(refreshToken);
 
-        // Redis에서 사용자 ID 조회
-        Long userId = refreshTokenRepository.getUserIdFromRefreshToken(refreshToken);
+        // refresh token id 조회
+        var id = RefreshToken.getRefreshToken(refreshToken);
 
-        // 새로운 Access Token 생성
-        String newAccessToken = jwtProvider.generateAccessToken(userId);
+        // 새로운 access token 생성
+        String newAccessToken = jwtProvider.generateAccessToken(id);
 
-        // 새로운 Refresh Token 생성 후 Redis에 저장 (기존 것은 자동 삭제됨)
-        String newRefreshToken = jwtProvider.generateRefreshToken(userId);
-        refreshTokenRepository.saveRefreshToken(newRefreshToken, userId);
+        // 기존에 가지고 있는 사용자의 refresh token 제거
+        RefreshToken.removeUserRefreshToken(id);
+
+        // 새로운 refresh token 생성 후 저장
+        String newRefreshToken = jwtProvider.generateRefreshToken(id);
+        RefreshToken.putRefreshToken(newRefreshToken, id);
 
         return RefreshTokenResponse.builder()
                 .accessToken(newAccessToken)

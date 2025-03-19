@@ -1,7 +1,7 @@
-package bumblebee.xchangepass.domain.user.login;
+package bumblebee.xchangepass.global.security.v1.login;
 
-import bumblebee.xchangepass.domain.user.login.dto.request.LoginRequest;
-import bumblebee.xchangepass.domain.user.login.dto.response.LoginResponse;
+import bumblebee.xchangepass.global.security.v1.login.dto.LoginRequest;
+import bumblebee.xchangepass.global.security.v1.login.dto.LoginResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -13,7 +13,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.ErrorResponse;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,7 +27,7 @@ public class LoginController {
 
     @Operation(summary = "로그인", description = "로그인합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "로그인 성공", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "200", description = "지갑 생성 성공", content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "파라미터 누락",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class),
@@ -36,27 +39,17 @@ public class LoginController {
                             schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(value = "{\n  \"code\": \"S002\"," +
                                                               "\n  \"message\": \"아이디 혹은 비밀번호가 일치하지 않습니다.\"}"))
+            ),
+            @ApiResponse(responseCode = "403", description = "권한이 없습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(value = "{\n  \"code\": \"S001\"," +
+                                                              "\n  \"message\": \"권한이 없습니다.\"}"))
             )
     })
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/login")
     public LoginResponse memberLogin(@RequestBody @Valid LoginRequest loginRequest) {
         return loginService.login(loginRequest);
-    }
-
-    @Operation(summary = "로그아웃", description = "로그아웃합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "로그아웃 성공", content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "401", description = "유효하지 않은 Refresh Token",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class),
-                            examples = @ExampleObject(value = "{\n  \"code\": \"S004\"," +
-                                                              "\n  \"message\": \"유효하지 않은 Refresh Token입니다.\"}")))
-    })
-    @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/logout")
-    public void logout(@RequestHeader("Authorization") String refreshToken) {
-        // Refresh Token 삭제
-        loginService.logout(refreshToken);
     }
 }

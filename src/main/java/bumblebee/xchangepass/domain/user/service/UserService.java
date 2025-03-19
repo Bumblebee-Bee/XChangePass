@@ -1,7 +1,7 @@
 package bumblebee.xchangepass.domain.user.service;
 
 import bumblebee.xchangepass.domain.user.dto.request.UserUpdateRequest;
-import bumblebee.xchangepass.domain.user.login.dto.response.UserLoginResponse;
+import bumblebee.xchangepass.domain.user.dto.response.UserLoginResponse;
 import bumblebee.xchangepass.domain.user.dto.response.UserResponse;
 import bumblebee.xchangepass.domain.user.entity.User;
 import bumblebee.xchangepass.domain.user.repository.UserRepository;

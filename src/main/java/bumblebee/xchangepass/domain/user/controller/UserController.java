@@ -5,7 +5,7 @@ import bumblebee.xchangepass.domain.user.dto.request.UserUpdateRequest;
 import bumblebee.xchangepass.domain.user.dto.response.UserResponse;
 import bumblebee.xchangepass.domain.user.service.UserService;
 import bumblebee.xchangepass.global.security.jwt.JwtUtil;
-import bumblebee.xchangepass.domain.user.service.UserRegisterService;
+import bumblebee.xchangepass.global.security.v1.login.UserRegisterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;

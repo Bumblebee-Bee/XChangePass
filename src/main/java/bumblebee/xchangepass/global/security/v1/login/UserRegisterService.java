@@ -1,4 +1,4 @@
-package bumblebee.xchangepass.domain.user.service;
+package bumblebee.xchangepass.global.security.v1.login;
 
 import bumblebee.xchangepass.domain.user.dto.request.UserRegisterRequest;
 import bumblebee.xchangepass.domain.user.entity.User;
