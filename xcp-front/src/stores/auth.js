@@ -14,17 +14,9 @@ export const useAuthStore = defineStore('auth', {
             this.isLoggedIn = false
             localStorage.setItem('isLoggedIn', 'false')
         },
-        async checkAuth() {
-            try {
-                const res = await fetch('http://localhost:8080/api/v1/user', {
-                    credentials: 'include'
-                })
-                this.isLoggedIn = res.ok
-            } catch {
-                this.isLoggedIn = false
-            } finally {
-                this.isReady = true
-            }
+        checkAuth() {
+            this.isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'
+            this.isReady = true
         }
     }
 })

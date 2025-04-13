@@ -1,5 +1,8 @@
 import { useAuthStore } from '@/stores/auth'
 
+let isRefreshing = false
+const queue = []
+
 export async function authFetch(url, options = {}) {
     const baseOptions = {
         ...options,
@@ -16,15 +19,16 @@ export async function authFetch(url, options = {}) {
             method: 'POST',
             credentials: 'include'
         })
-
         isRefreshing = false
 
+        const auth = useAuthStore()
+
         if (refreshRes.ok) {
+            auth.login() // 🔥 여기가 핵심!
             await processQueue(true, url, baseOptions)
             return await fetch(url, baseOptions)
         } else {
-            const auth = useAuthStore()
-            auth.logout() // ✅ 상태 초기화
+            auth.logout() // 🔒 실패 시 로그아웃
             await processQueue(false)
             alert('세션이 만료되었습니다. 다시 로그인해주세요.')
             window.location.href = '/user-login'
